@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-setup(name='Distutils',
+setup(name='bottle-registration',
     version='0.1',
     description='Authentication plugin from Bottle',
     author='Jonas Geiregat',

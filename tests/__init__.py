@@ -32,12 +32,14 @@ class BaseRegFlowTest(TestCase):
         self.assertEqual(backend.auth_db.store_user.call_args[1],
             {'age': self.AGE, 'firstname': self.FIRSTNAME})
 
-    def test_random_session_id_returns_id_as_string(self):
+    @patch('registration.request')
+    def test_random_session_id_returns_id_as_string(self, mocked_request):
+        mocked_request.remote_addr = "1"
         backend = self.get_simple_reg_backend()
 
         session_id = backend.random_session_id
 
-        self.assertEqual(len(session_id), 32)
+        self.assertEqual(len(session_id), 60)
         self.assertEqual(type(session_id), str)
 
     def get_simple_reg_backend(self):

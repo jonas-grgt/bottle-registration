@@ -1,3 +1,4 @@
+import base64
 import smtplib
 import uuid
 import inspect
@@ -11,6 +12,7 @@ from email.mime.multipart import MIMEMultipart
 from bottle import response
 from bottle import request
 from bottle import redirect
+import os
 
 
 def login_required(fn):
@@ -105,7 +107,8 @@ class BaseRegFlow(object):
 
     @property
     def random_session_id(self):
-        return str(uuid.UUID(bytes = OpenSSL.rand.bytes(16))).replace('-', '')
+        id = os.urandom(16) + request.remote_addr + datetime.now().isoformat()
+        return base64.b64encode(id)
 
     def register(self, username, pwd, **kwargs):
         return self.auth_db.store_user(username, pwd, **kwargs)
