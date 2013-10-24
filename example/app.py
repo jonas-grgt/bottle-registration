@@ -3,10 +3,7 @@ import bottle
 
 from bottle import route, request, run
 from bottle import redirect
-
-from bottle_registration import login_required, SimpleRegFlow, BaseAuthDB
-from bottle_registration import SimpleMailer
-from bottle_registration import RegistrationPlugin
+from registration import BaseAuthDB, SimpleMailer, SimpleRegFlow, RegistrationPlugin, login_required
 
 
 class AuthDB(BaseAuthDB):

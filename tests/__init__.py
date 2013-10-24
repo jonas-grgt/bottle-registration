@@ -3,7 +3,7 @@ from bottle import response
 from unittest import TestCase
 from mock import Mock, patch
 from mock import call
-from bottle_registration import SimpleRegFlow, ActivateAccountRegFlow, login_required
+from registration import SimpleRegFlow, ActivateAccountRegFlow, login_required
 
 
 class BaseRegFlowTest(TestCase):
@@ -71,7 +71,7 @@ class AccountActivationBaseRegFlowTest(TestCase):
 
 class LoginRequiredTest(TestCase):
 
-    @patch('bottle_registration.redirect')
+    @patch('registration.redirect')
     def test_custom_login_required_url(self, bottle_redirect):
         reg_flow = Mock(login_required_url='/test-login')
         view = Mock()
@@ -81,7 +81,7 @@ class LoginRequiredTest(TestCase):
         self.assertTrue(bottle_redirect.called)
         self.assertTrue(bottle_redirect.call_args == call('/test-login'))
 
-    @patch('bottle_registration.redirect')
+    @patch('registration.redirect')
     def test_when_a_user_is_not_logged_in_redirect(self, bottle_redirect):
         reg_flow = Mock()
         view = Mock()
