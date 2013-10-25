@@ -2,7 +2,6 @@ import base64
 import smtplib
 import uuid
 import inspect
-import OpenSSL
 
 from datetime import timedelta
 from datetime import datetime
