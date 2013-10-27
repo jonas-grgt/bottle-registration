@@ -109,8 +109,8 @@ class BaseRegFlow(object):
         id = os.urandom(16) + request.remote_addr + datetime.now().isoformat()
         return base64.b64encode(id)
 
-    def register(self, username, pwd, **kwargs):
-        return self.auth_db.store_user(username, pwd, **kwargs)
+    def register(self, *args, **kwargs):
+        return self.auth_db.store_user(*args, **kwargs)
 
     def login(self, *args, **kwargs):
         """
@@ -141,6 +141,12 @@ class BaseRegFlow(object):
     def unregister(self, username, password):
         self.auth_db.remove_user(username, password)
 
+    def random_username(self):
+        return "yeet"
+
+    def random_pwd(self):
+        return "yeet"
+
 
 class SimpleRegFlow(BaseRegFlow):
     """
@@ -150,9 +156,15 @@ class SimpleRegFlow(BaseRegFlow):
     and is immediately logged in.
     """
 
-    def register(self, username, pwd, **kwargs):
+    def register(self, *args, **kwargs):
+        username = kwargs.get('username', self.random_username())
+        pwd = kwargs.get('username', self.random_pwd())
+
         user = super(SimpleRegFlow, self).register(username, pwd, **kwargs)
-        return self.login(username=username, pwd=pwd)
+
+        self.login(username=username, pwd=pwd)
+
+        return user
 
 
 class ActivateAccountRegFlow(BaseRegFlow):
@@ -162,8 +174,12 @@ class ActivateAccountRegFlow(BaseRegFlow):
     User registers with username and password
     and is immediately logged in.
     """
-    def register(self, username, pwd, **kwargs):
+    def register(self, *args, **kwargs):
+        username = kwargs.get('username', self.random_username())
+        pwd = kwargs.get('username', self.random_pwd())
+
         user = super(ActivateAccountRegFlow, self).register(username, pwd, **kwargs)
+
         if user and 'email' in kwargs:
             self.send_account_activation_mail(user)
 
