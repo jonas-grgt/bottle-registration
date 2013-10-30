@@ -152,19 +152,23 @@ class SimpleRegFlow(BaseRegFlow):
     """
 
     The simplest registration flow possible.
-    User registers with username and password
+    User registers with email and password
     and is immediately logged in.
     """
 
     def register(self, *args, **kwargs):
-        username = kwargs.get('username', self.random_username())
-        pwd = kwargs.get('username', self.random_pwd())
+        username = kwargs.get('email', False)
+        pwd = kwargs.get('pwd', self.random_pwd())
 
-        user = super(SimpleRegFlow, self).register(username, pwd, **kwargs)
+        if username:
+            user = super(SimpleRegFlow, self).register(username, pwd, **kwargs)
 
-        self.login(username=username, pwd=pwd)
+            self.login(username=username, pwd=pwd)
 
-        return user
+            return user
+
+        return username
+
 
 
 class ActivateAccountRegFlow(BaseRegFlow):
