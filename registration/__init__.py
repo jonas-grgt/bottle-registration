@@ -1,6 +1,5 @@
 import base64
 import smtplib
-import uuid
 import inspect
 
 from datetime import timedelta
