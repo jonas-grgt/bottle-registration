@@ -95,7 +95,7 @@ class LoginRequiredTest(TestCase):
 
 class BaseAuthDBTest(TestCase):
     PWD = "my-secret-#3pwd"
-    
+
     def test_hash_method(self):
         auth_db = BaseAuthDB()
         hash = auth_db.hash(self.PWD)

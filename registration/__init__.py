@@ -120,7 +120,7 @@ class BaseRegFlow(object):
         if 'user' in kwargs:
             user = kwargs['user']
         else:
-            user = self.auth_db.get_user(username=kwargs['username'], pwd=kwargs['pwd'])
+            user = self.auth_db.get_user(**kwargs)
         if user:
             session_id = self.random_session_id
             self.auth_db.store_session(user, session_id)
@@ -224,21 +224,38 @@ class RegistrationPlugin(object):
 
 class BaseAuthDB(object):
     def hash(self, pwd):
+        """ Simple hashing of a password """
         m = hashlib.md5()
         m.update(pwd)
 
         return m.hexdigest()
 
     def store_user(self, username, pwd, *args, **kwargs):
+        """
+        Received a username and password and additional user information, through kwargs.
+        This method is responsible for storing the user.
+        """
         raise NotImplemented()
 
-    def store_session(self, username, session_id, *args, **kwargs):
+    def store_session(self, user, session_id, *args, **kwargs):
+        """
+        Receives a user object and session_id to be stored.
+
+        The user object is either the same object returned in `get_user` or
+        the user object passed into the Registration Flow `login` method.
+        """
         raise NotImplemented()
 
     def store_confirm_token(self, user, token):
+        """
+        Receives a user object and token to be stored.
+        """
         raise NotImplemented()
 
-    def get_user(self, *args, **kwargs):
+    def get_user(self, user, *args, **kwargs):
+        """
+        Receives a user object and token to be stored.
+        """
         raise NotImplemented()
 
     def get_user_by_session_id(self, session_id):
