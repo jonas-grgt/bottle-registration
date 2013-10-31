@@ -3,7 +3,7 @@ from bottle import response
 from unittest import TestCase
 from mock import Mock, patch
 from mock import call
-from registration import SimpleRegFlow, ActivateAccountRegFlow, login_required
+from registration import SimpleRegFlow, ActivateAccountRegFlow, login_required, BaseAuthDB
 
 
 class BaseRegFlowTest(TestCase):
@@ -91,3 +91,16 @@ class LoginRequiredTest(TestCase):
         result = login_required(view)(reg_flow=reg_flow)
 
         self.assertTrue(bottle_redirect.called)
+
+
+class BaseAuthDBTest(TestCase):
+    PWD = "my-secret-#3pwd"
+    
+    def test_hash_method(self):
+        auth_db = BaseAuthDB()
+        hash = auth_db.hash(self.PWD)
+
+        self.assertEqual(type(hash), str)
+        self.assertNotEqual(hash, auth_db.hash("my-secret-different-hash"))
+        self.assertNotEqual(hash, self.PWD)
+        self.assertEqual(hash, auth_db.hash(self.PWD))

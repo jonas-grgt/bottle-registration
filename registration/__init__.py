@@ -1,4 +1,5 @@
 import base64
+import hashlib
 import smtplib
 import inspect
 
@@ -223,7 +224,10 @@ class RegistrationPlugin(object):
 
 class BaseAuthDB(object):
     def hash(self, pwd):
-        pass
+        m = hashlib.md5()
+        m.update(pwd)
+
+        return m.hexdigest()
 
     def store_user(self, username, pwd, *args, **kwargs):
         raise NotImplemented()
