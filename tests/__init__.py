@@ -26,12 +26,13 @@ class BaseRegFlowTest(TestCase):
             call(self.USERNAME, self.PWD))
 
     def test_register_takes_additional_arguments(self):
-        backend = self.get_simple_reg_backend()
+        auth_db = MagicMock()
+        backend = self.get_simple_reg_backend(auth_db)
 
-        result = backend.register(self.USERNAME, self.PWD,
-            firstname=self.FIRSTNAME, age=self.AGE)
+        result = backend.register(**{'username': self.USERNAME, 'pwd': self.PWD,
+            'firstname': self.FIRSTNAME, 'age': self.AGE, 'email': self.EMAIL})
 
-        self.assertEqual(backend.auth_db.store_user.call_args[1],
+        self.assertEqual(auth_db.store_user.call_args[1],
             {'age': self.AGE, 'firstname': self.FIRSTNAME})
 
     @patch('registration.request')
@@ -44,8 +45,8 @@ class BaseRegFlowTest(TestCase):
         self.assertEqual(len(session_id), 60)
         self.assertEqual(type(session_id), str)
 
-    def get_simple_reg_backend(self):
-        return SimpleRegFlow(auth_db=MagicMock())
+    def get_simple_reg_backend(self, auth_db=MagicMock()):
+        return SimpleRegFlow(auth_db=auth_db)
 
 
 class AccountActivationBaseRegFlowTest(TestCase):
