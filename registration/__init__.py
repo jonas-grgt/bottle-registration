@@ -157,17 +157,18 @@ class SimpleRegFlow(BaseRegFlow):
     """
 
     def register(self, **user):
-        username = user.get('email', False)
+        email = user.get('email', False)
         pwd = user.get('pwd', self.random_pwd())
 
-        if username:
+        if email:
             user = super(SimpleRegFlow, self).register(**user)
 
-            self.login(**user)
+            if user: 
+                self.login(**user)
 
             return user
 
-        return username
+        return False
 
 
 

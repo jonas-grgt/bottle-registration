@@ -25,7 +25,8 @@ class BaseRegFlowTest(TestCase):
         self.assertTrue(backend.auth_db.store_user.call_args,
             call(self.USERNAME, self.PWD))
 
-    def test_register_takes_additional_arguments(self):
+    @patch('registration.request', remote_addr="193.432.34.3")
+    def test_register_takes_additional_arguments(self, request_mock):
         auth_db = MagicMock()
         backend = self.get_simple_reg_backend(auth_db)
 
