@@ -109,8 +109,8 @@ class BaseRegFlow(object):
         id = os.urandom(16) + request.remote_addr + datetime.now().isoformat()
         return base64.b64encode(id)
 
-    def register(self, *args, **kwargs):
-        return self.auth_db.store_user(*args, **kwargs)
+    def register(self, **user):
+        return self.auth_db.store_user(**user)
 
     def login(self, *args, **kwargs):
         """
@@ -178,13 +178,13 @@ class ActivateAccountRegFlow(BaseRegFlow):
     User registers with username and password
     and is immediately logged in.
     """
-    def register(self, *args, **kwargs):
-        username = kwargs.get('username', self.random_username())
-        pwd = kwargs.get('username', self.random_pwd())
+    def register(self, **user):
+        username = user.get('username', self.random_username())
+        pwd = user.get('username', self.random_pwd())
 
-        user = super(ActivateAccountRegFlow, self).register(username, pwd, **kwargs)
+        user = super(ActivateAccountRegFlow, self).register(**user)
 
-        if user and 'email' in kwargs:
+        if user and 'email' in user:
             self.send_account_activation_mail(user)
 
         return user
@@ -252,7 +252,8 @@ class BaseAuthDB(object):
         """
         raise NotImplemented()
 
-    def get_user(self, user, *args, **kwargs):
+    def get_user(self, **user):
+
         """
         Receives a user object and token to be stored.
         """
