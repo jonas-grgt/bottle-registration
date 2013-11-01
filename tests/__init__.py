@@ -14,10 +14,12 @@ class BaseRegFlowTest(TestCase):
     FIRSTNAME = "JohnnyBoy"
     AGE = 22
 
-    def test_register_good_username_pwd(self):
+
+    @patch('registration.request', remote_addr="193.432.34.3")
+    def test_register_good_username_pwd(self, request_mock):
         backend = self.get_simple_reg_backend()
 
-        result = backend.register(self.USERNAME, self.PWD)
+        result = backend.register(**{'email': self.USERNAME, 'pwd':self.PWD})
 
         self.assertTrue(backend.auth_db.store_user.called)
         self.assertTrue(backend.auth_db.store_user.call_args,
@@ -43,7 +45,7 @@ class BaseRegFlowTest(TestCase):
         self.assertEqual(type(session_id), str)
 
     def get_simple_reg_backend(self):
-        return SimpleRegFlow(auth_db=Mock())
+        return SimpleRegFlow(auth_db=MagicMock())
 
 
 class AccountActivationBaseRegFlowTest(TestCase):
@@ -64,6 +66,7 @@ class AccountActivationBaseRegFlowTest(TestCase):
             {'age': self.AGE, 'firstname': self.FIRSTNAME, 'pwd': self.PWD,
              'username': self.USERNAME, 'email': self.EMAIL})
 
+        # TODO: Fix this
         #self.assertTrue(backend.send_account_activation_mail.called)
 
     def get_simple_reg_backend(self, auth_db=MagicMock()):

@@ -112,15 +112,15 @@ class BaseRegFlow(object):
     def register(self, **user):
         return self.auth_db.store_user(**user)
 
-    def login(self, *args, **kwargs):
+    def login(self, **user):
         """
         Accepts username and pwd or
         user as parameters.
         """
-        if 'user' in kwargs:
-            user = kwargs['user']
+        if 'user' in user:
+            user = user['user']
         else:
-            user = self.auth_db.get_user(**kwargs)
+            user = self.auth_db.get_user(**user)
         if user:
             session_id = self.random_session_id
             self.auth_db.store_session(user, session_id)
@@ -130,7 +130,7 @@ class BaseRegFlow(object):
 
         return user
 
-    def logout(self, *args, **kwargs):
+    def logout(self, **user):
         response.set_cookie('session_id', 'deleted',
             path='/', expires='Thu, 01 Jan 1970 00:00:00 GMT')
         return True
@@ -138,8 +138,8 @@ class BaseRegFlow(object):
     def get_user(self, session_id):
         return self.auth_db.get_user_by_session_id(session_id)
 
-    def unregister(self, username, password):
-        self.auth_db.remove_user(username, password)
+    def unregister(self, **user):
+        self.auth_db.del_user(**user)
 
     def random_username(self):
         return "yeet"
@@ -156,14 +156,14 @@ class SimpleRegFlow(BaseRegFlow):
     and is immediately logged in.
     """
 
-    def register(self, *args, **kwargs):
-        username = kwargs.get('email', False)
-        pwd = kwargs.get('pwd', self.random_pwd())
+    def register(self, **user):
+        username = user.get('email', False)
+        pwd = user.get('pwd', self.random_pwd())
 
         if username:
-            user = super(SimpleRegFlow, self).register(username, pwd, **kwargs)
+            user = super(SimpleRegFlow, self).register(**user)
 
-            self.login(username=username, pwd=pwd)
+            self.login(**user)
 
             return user
 
@@ -237,7 +237,23 @@ class BaseAuthDB(object):
         """
         raise NotImplemented()
 
+    def del_user(self, username, pwd, *args, **kwargs):
+        """
+        Received a username and password and additional user information, through kwargs.
+        This method is responsible for storing the user.
+        """
+        raise NotImplemented()
+
     def store_session(self, user, session_id, *args, **kwargs):
+        """
+        Receives a user object and session_id to be stored.
+
+        The user object is either the same object returned in `get_user` or
+        the user object passed into the Registration Flow `login` method.
+        """
+        raise NotImplemented()
+
+    def del_session(self, user, session_id, *args, **kwargs):
         """
         Receives a user object and session_id to be stored.
 
