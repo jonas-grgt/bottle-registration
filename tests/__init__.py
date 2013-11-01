@@ -25,17 +25,6 @@ class BaseRegFlowTest(TestCase):
         self.assertTrue(backend.auth_db.store_user.call_args,
             call(self.USERNAME, self.PWD))
 
-    @patch('registration.request', remote_addr="193.432.34.3")
-    def test_register_takes_additional_arguments(self, request_mock):
-        auth_db = MagicMock()
-        backend = self.get_simple_reg_backend(auth_db)
-
-        result = backend.register(**{'username': self.USERNAME, 'pwd': self.PWD,
-            'firstname': self.FIRSTNAME, 'age': self.AGE, 'email': self.EMAIL})
-
-        self.assertEqual(auth_db.store_user.call_args[1],
-            {'age': self.AGE, 'firstname': self.FIRSTNAME})
-
     @patch('registration.request')
     def test_random_session_id_returns_id_as_string(self, mocked_request):
         mocked_request.remote_addr = "1"
